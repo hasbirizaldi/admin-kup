@@ -1,16 +1,89 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import { alertError, alertSuccess } from "../../lib/alert";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CreateArtikel = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+
+  const { slug } = useParams();
+const isEdit = Boolean(slug);
+
+useEffect(() => {
+  if (!isEdit) return;
+
+  const fetchArtikel = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        `https://brewokode.site/api/artikels/${slug}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = res.data.data ?? res.data;
+
+      setForm({
+        category: data.category,
+        title: data.title,
+        slug: data.slug,
+        excerpt: data.excerpt,
+        published_at: data.published_at,
+        image: null,
+        imagePreview: data.image_url ?? null,
+        image_alt: data.image_alt,
+        meta_title: data.meta_title,
+        meta_description: data.meta_description,
+        meta_keywords: data.meta_keywords,
+        canonical_url: data.canonical_url,
+        content: data.content,
+        status: Boolean(data.status),
+        featured: Boolean(data.featured),
+        noindex: Boolean(data.noindex),
+      });
+
+      // 🔥 INI KUNCI TAGS IKUT UPDATE
+      setTags(data.tags.map(tag => tag.name));
+
+    } catch (err) {
+      console.log(err)
+      alertError("Gagal memuat artikel");
+    }
+  };
+
+  fetchArtikel();
+}, [slug]);
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+
+      const value = tagInput.trim().toLowerCase();
+      if (!value) return;
+
+      if (!tags.includes(value)) {
+        setTags([...tags, value]);
+      }
+
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (index) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
+
 
   const [form, setForm] = useState({
     category: "",
@@ -48,42 +121,51 @@ const CreateArtikel = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!form.title || !form.category || !form.content || !form.image) {
-      alertError("Kategori, Judul, Konten, dan Gambar wajib diisi");
-      return;
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+
+    Object.keys(form).forEach((key) => {
+      if (key === "imagePreview") return;
+      let value = form[key];
+      if (typeof value === "boolean") value = value ? 1 : 0;
+      formData.append(key, value);
+    });
+
+    // 🔥 KIRIM TAGS
+    tags.forEach((tag, index) => {
+      formData.append(`tags[${index}]`, tag);
+    });
+
+    let url = "https://brewokode.site/api/artikels";
+
+    if (isEdit) {
+      url = `https://brewokode.site/api/artikels/${slug}`;
+      formData.append("_method", "PUT"); // WAJIB
     }
 
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const formData = new FormData();
+    await axios.post(url, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-      Object.keys(form).forEach((key) => {
-        if (key === "imagePreview") return;
-        let value = form[key];
-        if (typeof value === "boolean") value = value ? 1 : 0;
-        formData.append(key, value);
-      });
+    alertSuccess(isEdit ? "Artikel diperbarui" : "Artikel dibuat");
+    navigate("/artikel");
 
-      await axios.post("http://localhost:8000/api/artikels", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+  } catch (err) {
+    console.error(err);
+    alertError("Gagal menyimpan artikel");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      alertSuccess("Artikel berhasil dibuat");
-      navigate("/artikel");
-    } catch (err) {
-      console.error(err);
-      alertError("Gagal membuat artikel");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="flex">
@@ -108,13 +190,13 @@ const CreateArtikel = () => {
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full border px-3 py-2 rounded bg-white"
+                className="w-full border px-3 py-2 cursor-pointer rounded bg-white"
                 required
               >
                 <option value="">-- Pilih Kategori --</option>
-                <option value="Berita">Berita</option>
                 <option value="Kesehatan">Kesehatan</option>
                 <option value="Islami">Islami</option>
+                <option value="Berita">Berita</option>
               </select>
             </div>
 
@@ -128,7 +210,7 @@ const CreateArtikel = () => {
                 name="published_at"
                 value={form.published_at}
                 onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full border px-3 py-2 rounded cursor-pointer"
               />
             </div>
 
@@ -175,7 +257,7 @@ const CreateArtikel = () => {
             />
 
             {/* IMAGE */}
-            <input type="file" accept="image/*" onChange={handleChange} />
+            <input type="file" accept="image/*" onChange={handleChange} className="border py-2 rounded mt-5 px-3 border-gray-800 cursor-pointer"/>
 
             {form.imagePreview && (
               <img
@@ -242,7 +324,7 @@ const CreateArtikel = () => {
                   type="checkbox"
                   name="status"
                   checked={form.status}
-                  onChange={handleChange}
+                  onChange={handleChange} className="cursor-pointer"
                 />{" "}
                 Publish
               </label>
@@ -268,11 +350,47 @@ const CreateArtikel = () => {
               </label>
             </div>
 
+{/* TAGS */}
+<div>
+  <label className="block font-semibold mb-1">Tags</label>
+
+  <div className="flex flex-wrap gap-2 border rounded px-3 py-2">
+    {tags.map((tag, index) => (
+      <span
+        key={index}
+        className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm flex items-center gap-1"
+      >
+        #{tag}
+        <button
+          type="button"
+          onClick={() => removeTag(index)}
+          className="text-red-500 font-bold"
+        >
+          ×
+        </button>
+      </span>
+    ))}
+
+    <input
+      type="text"
+      value={tagInput}
+      onChange={(e) => setTagInput(e.target.value)}
+      onKeyDown={handleTagKeyDown}
+      placeholder="Ketik tag lalu Enter"
+      className="flex-1 outline-none"
+    />
+  </div>
+
+  <p className="text-xs text-gray-500 mt-1">
+    Tekan Enter atau koma untuk menambah tag
+  </p>
+</div>
+
             {/* SUBMIT */}
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+              className="bg-blue-600 text-white px-6 py-2 cursor-pointer rounded hover:bg-blue-700"
             >
               {loading ? "Menyimpan..." : "Simpan Artikel"}
             </button>

@@ -30,7 +30,7 @@ const Sidebar = ({ collapsed }) => {
 
     try {
       await axios.post(
-        "http://localhost:8000/api/logout",
+        "https://brewokode.site/api/logout",
         {},
         {
           headers: {

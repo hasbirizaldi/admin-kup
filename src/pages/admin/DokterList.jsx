@@ -4,7 +4,7 @@ import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import { alertConfirm, alertError, alertSuccess } from "../../lib/alert";
 
-const API = "http://localhost:8000/api/dokters";
+const API = "https://brewokode.site/api/dokters";
 
 const DokterList = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -52,7 +52,7 @@ const DokterList = () => {
 
 
   const fetchSpesialis = async () => {
-    const res = await axios.get("http://localhost:8000/api/spesialis", {
+    const res = await axios.get("https://brewokode.site/api/spesialis", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -244,7 +244,7 @@ const DokterList = () => {
                       <td className="p-3">{index + 1}</td>
                       <td className="p-3">{dokter?.foto && (
                         <img
-                          src={`http://localhost:8000/storage/${dokter.foto}`}
+                          src={`https://brewokode.site/storage/${dokter.foto}`}
                           className="w-24 h-24 object-cover rounded"
                         />
                       )}

@@ -4,8 +4,8 @@ import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import {  alertError, alertSuccess } from "../../lib/alert";
 
-const API_JADWAL = "http://localhost:8000/api/jadwal-dokters";
-const API_DOKTER = "http://localhost:8000/api/get-all-dokter";
+const API_JADWAL = "https://brewokode.site/api/jadwal-dokters";
+const API_DOKTER = "https://brewokode.site/api/get-all-dokter";
 const authHeader = () => ({
   headers: {
     Authorization: `Bearer ${localStorage.getItem("token")}`,

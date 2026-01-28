@@ -5,7 +5,7 @@ import Topbar from "../../components/admin/Topbar";
 import { AiFillDelete } from "react-icons/ai";
 import {  alertConfirm, alertError, alertSuccess,  } from "../../lib/alert";
 
-const API = "http://localhost:8000/api/lamaran-admin";
+const API = "https://brewokode.site/api/lamaran-admin";
 
 const Lamaran = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -89,7 +89,7 @@ const handleDeleteAll = async () => {
 const handleExportExcel = async () => {
   try {
     const res = await axios.get(
-      "http://localhost:8000/api/lamaran-admin/export",
+      "https://brewokode.site/api/lamaran-admin/export",
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -197,7 +197,7 @@ useEffect(() => {
                       <td className="p-2">
                          {item.pas_foto ? (
                             <img
-                              src={`http://localhost:8000/storage/${item.pas_foto}`}
+                              src={`https://brewokode.site/storage/${item.pas_foto}`}
                               alt={item.nama_lengkap}
                               className="w-12 h-16 object-cover rounded border mx-auto"
                             />
@@ -312,7 +312,7 @@ useEffect(() => {
             {/* BODY */}
             <div className="p-4 h-[80vh]">
               <iframe
-                src={`http://localhost:8000/storage/${selectedFile}`}
+                src={`https://brewokode.site/storage/${selectedFile}`}
                 className="w-full h-full rounded"
                 title="Berkas Lamaran"
               />
@@ -321,7 +321,7 @@ useEffect(() => {
             {/* FOOTER */}
             <div className="p-4 border-t flex justify-end">
               <a
-                href={`http://localhost:8000/storage/${selectedFile}`}
+                href={`https://brewokode.site/storage/${selectedFile}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

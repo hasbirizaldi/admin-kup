@@ -32,7 +32,7 @@ const ArtikelList = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `http://localhost:8000/api/artikels`,
+        `https://brewokode.site/api/artikels`,
         {
           params: {
             page,
@@ -64,7 +64,7 @@ const ArtikelList = () => {
     setDeletingId(slug);
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:8000/api/artikels/${slug}`, {
+      await axios.delete(`https://brewokode.site/api/artikels/${slug}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -4,7 +4,7 @@ import Sidebar from "../../components/admin/Sidebar";
 import Topbar from "../../components/admin/Topbar";
 import { alertConfirm, alertError, alertSuccess } from "../../lib/alert";
 
-const API = "http://localhost:8000/api/spesialis";
+const API = "https://brewokode.site/api/spesialis";
 
 const Spesialis = () => {
   const [collapsed, setCollapsed] = useState(false);

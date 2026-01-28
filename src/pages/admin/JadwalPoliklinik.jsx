@@ -4,7 +4,7 @@ import Topbar from "../../components/admin/Topbar";
 import axios from "axios";
 import { alertConfirm, alertError, alertSuccess } from "../../lib/alert";
 
-const API_URL = "http://localhost:8000/api/jadwal-polikliniks";
+const API_URL = "https://brewokode.site/api/jadwal-polikliniks";
 
 const JadwalPoliklinik = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -325,7 +325,7 @@ const handleSubmit = async (e) => {
                       key={item.id}
                       className={`border-t ${
                         isToday(item.tanggal)
-                          ? "bg-green-400 hover:bg-green-200"
+                          ? "bg-green-200 hover:bg-green-200"
                           : "hover:bg-slate-50"
                       }`}
                     >
@@ -435,13 +435,13 @@ const handleSubmit = async (e) => {
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded"
+                className="px-4 py-2 bg-gray-400 text-white rounded cursor-pointer"
               >
                 Batal
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer"
               >
                 Simpan
               </button>

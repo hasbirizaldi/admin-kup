@@ -7,7 +7,7 @@ import { FaEdit } from "react-icons/fa";
 import { alertConfirm, alertError, alertSuccess } from "../../lib/alert";
 import { formatTanggal, getEmbedUrl } from "../../lib/helper";
 
-const API = "http://localhost:8000/api/vidios";
+const API = "https://brewokode.site/api/vidios";
 
 const Vidio = () => {
   const [collapsed, setCollapsed] = useState(false);

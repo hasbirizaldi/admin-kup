@@ -6,7 +6,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { alertConfirm, alertError, alertSuccess } from "../../lib/alert";
 
-const API = "http://localhost:8000/api/galleries";
+const API = "https://brewokode.site/api/galleries";
 
 const Gallery = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -155,7 +155,7 @@ const Gallery = () => {
                   )}
 
                   <img
-                    src={`http://localhost:8000/storage/${item.image}`}
+                    src={`https://brewokode.site/storage/${item.image}`}
                     className="w-full object-cover rounded-t"
                   />
 

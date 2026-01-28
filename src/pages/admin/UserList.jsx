@@ -20,7 +20,7 @@ const UserList = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/users", {
+      const res = await axios.get("https://brewokode.site/api/users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -39,7 +39,7 @@ const UserList = () => {
     if (!result) return;
 
     try {
-        await axios.delete(`http://localhost:8000/api/users/${id}`, {
+        await axios.delete(`https://brewokode.site/api/users/${id}`, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -102,7 +102,7 @@ const UserList = () => {
                       </td>
 
                       <td className="p-3">
-                        {user.status === 1 ? (
+                        {user.status === "1" ? (
                           <span className="text-green-600 font-semibold">
                             Aktif
                           </span>

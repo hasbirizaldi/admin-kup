@@ -21,7 +21,7 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:8000/api/login", form);
+      const res = await axios.post("https://brewokode.site/api/login", form);
 
       // simpan token
       localStorage.setItem("token", res.data.access_token);

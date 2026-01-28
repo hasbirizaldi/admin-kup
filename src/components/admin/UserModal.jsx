@@ -51,7 +51,7 @@ const handleSubmit = async (e) => {
   try {
     if (isEdit) {
       await axios.put(
-        `http://localhost:8000/api/users/${editUser.id}`,
+        `https://brewokode.site/api/users/${editUser.id}`,
         form,
         {
           headers: {
@@ -60,7 +60,7 @@ const handleSubmit = async (e) => {
         }
       );
     } else {
-      await axios.post("http://localhost:8000/api/users", form, {
+      await axios.post("https://brewokode.site/api/users", form, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

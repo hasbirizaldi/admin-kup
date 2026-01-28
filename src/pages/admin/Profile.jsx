@@ -27,7 +27,7 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/me", {
+      const res = await axios.get("https://brewokode.site/api/me", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -56,7 +56,7 @@ const Profile = () => {
 
     try {
       await axios.put(
-        "http://localhost:8000/api/profile",
+        "https://brewokode.site/api/profile",
         {
           name: form.name,
           password: form.password || undefined,

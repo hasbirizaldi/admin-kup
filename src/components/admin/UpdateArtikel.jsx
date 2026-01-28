@@ -13,6 +13,8 @@ const UpdateArtikel = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [tagInput, setTagInput] = useState("");
+
   const [form, setForm] = useState({
     category: "",
     title: "",
@@ -29,6 +31,7 @@ const UpdateArtikel = () => {
     status: false,
     featured: false,
     noindex: false,
+    tags: [],
   });
 
   // ================= FETCH DATA =================
@@ -37,12 +40,12 @@ const UpdateArtikel = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `http://localhost:8000/api/artikel/${slug}`,
+          `https://brewokode.site/api/artikel/${slug}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         const a = res.data.data;
-
+        const tagsArr = a.tags ? a.tags.map(t => t.name) : [];
         setForm({
           category: a.category,
           title: a.title,
@@ -50,7 +53,7 @@ const UpdateArtikel = () => {
           published_at: a.published_at ?? "",
           image: null,
           imagePreview: a.image
-            ? `http://localhost:8000/storage/${a.image}`
+            ? `https://brewokode.site/storage/${a.image}`
             : null,
           image_alt: a.image_alt ?? "",
           meta_title: a.meta_title ?? "",
@@ -61,7 +64,9 @@ const UpdateArtikel = () => {
           status: !!a.status,
           featured: !!a.featured,
           noindex: !!a.noindex,
+          tags: tagsArr,
         });
+        setTagInput(tagsArr.join(", "));
       } catch (err) {
         console.error(err);
         alertError("Gagal memuat artikel");
@@ -91,47 +96,59 @@ const UpdateArtikel = () => {
 
   // ================= SUBMIT =================
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!form.title || !form.category || !form.content) {
-      alertError("Kategori, Judul, dan Konten wajib diisi");
-      return;
-    }
+  if (!form.title || !form.category || !form.content) {
+    alertError("Kategori, Judul, dan Konten wajib diisi");
+    return;
+  }
 
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const formData = new FormData();
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
 
-      Object.keys(form).forEach((key) => {
-        if (key === "imagePreview") return;
-        let value = form[key];
-        if (typeof value === "boolean") value = value ? 1 : 0;
-        if (value !== null) formData.append(key, value);
-      });
+    // ================= DATA UTAMA =================
+    Object.keys(form).forEach((key) => {
+      if (key === "imagePreview" || key === "tags") return;
 
-      formData.append("_method", "PUT");
+      let value = form[key];
+      if (typeof value === "boolean") value = value ? 1 : 0;
 
-      await axios.post(
-        `http://localhost:8000/api/artikels/${slug}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      if (value !== null) {
+        formData.append(key, value);
+      }
+    });
 
-      alertSuccess("Artikel berhasil diperbarui");
-      navigate("/artikel");
-    } catch (err) {
-      console.error(err);
-      alertError("Gagal memperbarui artikel");
-    } finally {
-      setLoading(false);
-    }
-  };
+    // ================= TAGS (WAJIB PISAH) =================
+    form.tags.forEach((tag, index) => {
+      formData.append(`tags[${index}]`, tag);
+    });
+
+    // ================= METHOD PUT =================
+    formData.append("_method", "PUT");
+
+    await axios.post(
+      `https://brewokode.site/api/artikels/${slug}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    alertSuccess("Artikel berhasil diperbarui");
+    navigate("/artikel");
+  } catch (err) {
+    console.error(err.response?.data || err);
+    alertError("Gagal memperbarui artikel");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // ================= RENDER =================
   return (
@@ -194,12 +211,11 @@ const UpdateArtikel = () => {
 
             {/* IMAGE */}
             <label className="px-4 py-2 text-sm  bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700">
-              Pilih Gambar
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleChange}
-                className="hidden"
+                className="mt-8 mb-4 cursor-pointer"
               />
             </label>
 
@@ -293,6 +309,35 @@ const UpdateArtikel = () => {
                 Noindex
               </label>
             </div>
+
+            <div>
+              <label className="block font-semibold mb-1">Tags</label>
+
+              <input
+  type="text"
+  value={tagInput}
+  onChange={(e) => {
+    const value = e.target.value;
+    setTagInput(value);
+
+    setForm(prev => ({
+      ...prev,
+      tags: value
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag !== "")
+    }));
+  }}
+  placeholder="contoh: laravel, react, seo"
+  className="w-full border px-3 py-2 rounded"
+/>
+
+
+              <p className="text-xs text-gray-500 mt-1">
+                Pisahkan dengan koma
+              </p>
+            </div>
+
 
             <button
               type="submit"

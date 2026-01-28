@@ -6,7 +6,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { alertConfirm, alertError, alertSuccess } from "../../lib/alert";
 
-const API = "http://localhost:8000/api/job-vacancies";
+const API = "https://brewokode.site/api/job-vacancies";
 
 const AdminKarier = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -144,7 +144,7 @@ const AdminKarier = () => {
             <h2 className="text-xl font-bold">Admin Karier</h2>
             <button
               onClick={openCreateModal}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
+              className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
             >
               + Tambah Lowongan
             </button>
@@ -211,7 +211,7 @@ const AdminKarier = () => {
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
           <form
             onSubmit={handleSubmit}
-            className="bg-white p-6 rounded w-full max-w-lg"
+            className="bg-white p-6 rounded w-full max-w-5xl"
           >
             <h3 className="font-bold mb-4">
               {isEdit ? "Edit" : "Tambah"} Lowongan
@@ -267,11 +267,11 @@ const AdminKarier = () => {
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="border px-4 py-2 rounded"
+                className="border px-4 py-2 rounded cursor-pointer"
               >
                 Batal
               </button>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded">
+              <button className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer">
                 Simpan
               </button>
             </div>
